@@ -16,20 +16,31 @@ if (!configuration.apiKey) {
 
 const openai = new OpenAIApi(configuration);
 
+const messages = [];
+
 stdin.on("data", async (data) => {
   if (!data || data.length === 0) {
     return;
   }
 
+  messages.push({ role: "user", content: data });
+
   try {
-    const completion = await openai.createCompletion({
-      model: "text-davinci-003",
-      prompt: data,
+    const completion = await openai.createChatCompletion({
+      model: "gpt-3.5-turbo",
+      messages: messages,
       temperature: 0.6,
       max_tokens: 2048,
+      n: 1,
+      presence_penalty: -0.5,
+      frequency_penalty: 1.0,
     });
 
-    process.stdout.write(`${completion.data.choices[0].text}\n`);
+    const message = completion.data.choices[0].message;
+
+    messages.push(message);
+
+    process.stdout.write(`${message.content}\n`);
     // process.stdout.write(`${JSON.stringify(completion.data.choices)}\n`);
   } catch (error) {
     throw new Error(error.message);
