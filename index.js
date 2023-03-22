@@ -23,6 +23,8 @@ stdin.on("data", async (data) => {
     return;
   }
 
+  process.stdout.write(`~~~\n`);
+
   messages.push({ role: "user", content: data });
 
   try {
@@ -40,8 +42,8 @@ stdin.on("data", async (data) => {
 
     messages.push(message);
 
-    process.stdout.write(`${message.content}\n`);
-    // process.stdout.write(`${JSON.stringify(completion.data.choices)}\n`);
+    process.stdout.write(`${message.content.trim()}\n`);
+    process.stdout.write(`~~~\n`);
   } catch (error) {
     throw new Error(error.message);
   }
